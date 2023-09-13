@@ -1,30 +1,32 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveAction : MonoBehaviour
+public class MoveAction : BaseAction
 {
 
     private Vector3 targetPos;
     private float stopDistance = .1f;
     private float turnSpeed = 10f;
-    private bool isMoving;
     [SerializeField] private Animator unitAnimator;
     [SerializeField] private int maxMoveDistance = 4;
-    private Unit unit;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         targetPos = transform.position;
-        unit = GetComponent<Unit>();
     }
 
     private void Update()
     {
+        if (!isActive) return;
+        
+
+
         float moveSpeed = 4;
         if (Vector3.Distance(transform.position, targetPos) > stopDistance)
         {
-            unitAnimator.SetBool("isMoving", true);
             Vector3 moveDirection = (targetPos - transform.position).normalized;
             transform.position += moveDirection * Time.deltaTime * moveSpeed;
             transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * turnSpeed);
@@ -32,13 +34,17 @@ public class MoveAction : MonoBehaviour
         }
         else
         {
-            unitAnimator.SetBool("isMoving", false);
+            EndAction();
         }
+        unitAnimator.SetBool("isMoving", isActive);
+
     }
 
-    public void Move(GridPosition gridPosition)
+    public void Move(GridPosition gridPosition, Action moveCompletedDelegate)
     {
+        base.StartAction(moveCompletedDelegate);
         targetPos = LevelGrid.Instance.GetWorldPosition(gridPosition);
+
     }
 
     public bool IsValidActionGridPosition(GridPosition gridPosition)

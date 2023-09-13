@@ -21,6 +21,7 @@ public class Testing : MonoBehaviour
     {
         GridSystemVisual.Instance.ShowGridPositionList(
             unit.GetMoveAction().GetValidActionGridPositionList());
+
     }
 
     private void UnitActionSystem_OnSelectedUnitChanged(object sender, EventArgs e)
